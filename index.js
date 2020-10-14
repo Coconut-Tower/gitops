@@ -106,6 +106,7 @@ async function run() {
     const dryRun = core.getInput("dry-run") || false;
     const email = core.getInput("email") || "bot@deliverybot.dev";
     const name = core.getInput("name") || "bot[gitops]";
+    const commitMessage = core.getInput("commit-message") || "Deploy";
     const manifests = getList(core.getInput("manifests", { required: true }));
 
     core.debug(`param: remote = "${remote}"`);
@@ -132,7 +133,7 @@ async function run() {
     await copyFiles(manifests, path.join("target", target));
 
     await exec.exec("git", ["add", "."], { cwd: "./target" });
-    await exec.exec("git", ["commit", "-m", `Deploy`], { cwd: "./target" });
+    await exec.exec("git", ["commit", "-m", commitMessage], { cwd: "./target" });
     if (!dryRun) {
       await exec.exec("git", ["push"], { cwd: "./target" });
     }
